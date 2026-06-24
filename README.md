@@ -34,3 +34,24 @@ A collection of backend concepts and mini-projects built while learning Node.js 
 ## Status
 
 🟡 Actively learning — updated regularly
+
+## Latest Progress
+
+### User Registration API ✅
+- Complete REST API endpoint — `POST /register`
+- Request validation — empty fields, duplicate email/username
+- File upload handling — avatar (required) + cover image (optional)
+- Cloudinary integration — cloud storage for images
+- Password hashing via bcrypt (pre-save middleware)
+- Sensitive fields hidden in response — password, refreshToken
+- Proper HTTP status codes — 201, 400, 409, 500
+- Custom error handling — ApiError, asyncHandler wrapper
+
+### Concepts Covered
+- Mongoose pre-save middleware
+- bcrypt — password hashing and comparison
+- Multer — file upload handling
+- Cloudinary — cloud file storage + cleanup
+- MongoDB operators — `$or`, `$and`
+- REST API design patterns
+- async/await error handling
