@@ -9,7 +9,7 @@ const registerUser = asyncHandler(async (req, res) => {
     // get user details from front-end
 
     const { username, fullName, email, password } = req.body //req.body return object
-
+    console.log(username , fullName , email , password)
     //validation
 
     if (
@@ -38,10 +38,11 @@ const registerUser = asyncHandler(async (req, res) => {
 
     const avatar = await uploadOnCloudinary(avatarLocalPath)
     const coverImage = await uploadOnCloudinary(coverImageLocalPath)
-
+    
     if (!avatar) {
         throw new ApiError(409, "Avatar is required")
     }
+
 
     // create user in database
 

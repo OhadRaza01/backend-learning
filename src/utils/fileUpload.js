@@ -1,7 +1,7 @@
 import { v2 as cloudinary } from "cloudinary"
 import { response } from "express";
 import fs from "fs" //built-in in nodes.js
-
+import 'dotenv/config'
 
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -17,8 +17,8 @@ const uploadOnCloudinary = async (filePath) => {
             resource_type: "auto"
         })
         //file uplaoded successfully 
-        console.log("file is uploaded", response.url)
-        // fs.unlinkSync(filePath) 
+        fs.unlinkSync(filePath) 
+        
         return response
     }
     catch (error) {

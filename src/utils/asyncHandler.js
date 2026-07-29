@@ -9,12 +9,6 @@ const asyncHandler = (fn) => async (req, res, next) => {
             success: false,
             message: err.message
         })
-        
-        // upr hamne res.status().json() ek sath bhejdiye separately bh bhej skte hein
-        // res.json({
-        //     success: false,
-        //     message: err.message
-        // })
     }
 }
 

@@ -11,7 +11,7 @@ class ApiError extends Error {
         this.errors = errors
         this.success = false
 
-        //stack hota hai Error ki fulldetail kia error hai konse functions execute hue kis line pr error aya debugging mai help krta hai
+        //stack hota hai Error ki full detail kia error hai konse functions execute hue kis line pr error aya debugging mai help krta hai
         if (stack) {
             this.stack = stack
         }

@@ -55,13 +55,12 @@ const userSchema = new mongoose.Schema({
 
 }, { timestamps: true })
 
-userSchema.pre("save", async function (next) {
+userSchema.pre("save", async function () {
 
     // check if password is modified or not 
-    if (!this.isModified("password")) return next()
+    if (!this.isModified("password")) return;
 
     this.password = await bcrypt.hash(this.password, 8)
-    next();
 })
 
 //method to check password that user insert password correctly
