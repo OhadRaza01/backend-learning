@@ -2,14 +2,14 @@ import asyncHandler from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.model.js"
 import { uploadOnCloudinary } from "../utils/fileUpload.js";
-import {ApiResponse} from "../utils/ApiResponse.js"
+import { ApiResponse } from "../utils/ApiResponse.js"
 
 const registerUser = asyncHandler(async (req, res) => {
 
     // get user details from front-end
 
     const { username, fullName, email, password } = req.body //req.body return object
-    console.log(username , fullName , email , password)
+    // console.log(username, fullName, email, password)
     //validation
 
     if (
@@ -30,7 +30,12 @@ const registerUser = asyncHandler(async (req, res) => {
     //upload avatar and image 
 
     const avatarLocalPath = req.files?.avatar[0]?.path
-    const coverImageLocalPath = req.files?.coverImage[0]?.path
+    // const coverImageLocalPath = req.files?.coverImage[0]?.path
+
+    let coverImageLocalPath;
+    if (req.files && req.files.coverImage && req.files.coverImage.length > 0) {
+        coverImageLocalPath = req.files.coverImage[0].path
+    }
 
     if (!avatarLocalPath) {
         throw new ApiError(409, "avatar is required")
@@ -38,19 +43,18 @@ const registerUser = asyncHandler(async (req, res) => {
 
     const avatar = await uploadOnCloudinary(avatarLocalPath)
     const coverImage = await uploadOnCloudinary(coverImageLocalPath)
-    
+
     if (!avatar) {
         throw new ApiError(409, "Avatar is required")
     }
-
 
     // create user in database
 
     const user = await User.create({
         fullName,
-        avatar : avatar.url,
-        coverImage : coverImage?.url || "",
-        username : username.toLowerCase(),
+        avatar: avatar.url,
+        coverImage: coverImage?.url || "",
+        username: username.toLowerCase(),
         email,
         password
     })
@@ -59,12 +63,12 @@ const registerUser = asyncHandler(async (req, res) => {
         "-password -refreshToken"
     )
 
-    if(!createdUser){
-        throw new ApiError(500 , "something went wrong while registering user")
+    if (!createdUser) {
+        throw new ApiError(500, "something went wrong while registering user")
     }
 
     return res.status(201).json(
-        new ApiResponse(201 , createdUser , "User Registered succesfully")
+        new ApiResponse(201, createdUser, "User Registered succesfully")
     )
 
 })
