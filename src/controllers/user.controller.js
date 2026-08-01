@@ -264,7 +264,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
             username,
             email
         }
-    }, { new: true }).select("-password -refreshToken")
+    }, { returnDocument: "after"}).select("-password -refreshToken")
 
     return res
         .status(200)
