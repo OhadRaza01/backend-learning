@@ -193,16 +193,16 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         }
 
         if (incomingRefreshToken !== user?.refreshToken) {
-            throw new ApiError(401 ,"Refresh token is not valid")
+            throw new ApiError(401, "Refresh token is not valid")
         }
 
-        const { accessToken , refreshToken } = await generateAccessTokenAndRefreshToken(user._id)
+        const { accessToken, refreshToken } = await generateAccessTokenAndRefreshToken(user._id)
 
         return res.status(200)
             .cookie("accessToken", accessToken, options)
             .cookie("refreshToken", refreshToken, options)
             .json(
-                new ApiResponse(200 , {} , "access token is refreshed")
+                new ApiResponse(200, {}, "access token is refreshed")
             )
 
     } catch (error) {
@@ -211,4 +211,35 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
 })
 
-export { registerUser, loginUser, logoutUser, refreshAccessToken }
+const changeCurrentPassword = asyncHandler(async (req, res) => {
+
+    const { oldPassword, newPassword, confirmPassword } = req.body
+
+    const user = await User.findById(req.user?._id)
+
+    if (!oldPassword || !newPassword || !confirmPassword) {
+        throw new ApiError(400, "old password fields are required.")
+    }
+
+    const isPasswordValid = await user.isPasswordCorrect(oldPassword)
+
+    if (!isPasswordValid) {
+        throw new ApiError(400, "old password is invalid")
+    }
+
+    if (!(newPassword === oldPassword)) {
+        throw new ApiError(400, "new password and old password should be same.")
+    }
+
+    user.password = newPassword
+
+    user.save({ validateBeforeSave: false })
+
+    return res
+    .status(200)
+    .json(200 , {} , "Password is changed successfully.")
+
+
+})
+
+export { registerUser, loginUser, logoutUser, refreshAccessToken , changeCurrentPassword }
