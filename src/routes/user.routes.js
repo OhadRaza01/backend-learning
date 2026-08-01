@@ -13,8 +13,8 @@ router.route("/register").post(
             maxCount: 1
         },
         {
-            name : "coverImage",
-            maxCount : 1
+            name: "coverImage",
+            maxCount: 1
         }
     ]),
     registerUser
@@ -23,7 +23,7 @@ router.route("/register").post(
 router.route("/login").post(loginUser)
 
 //secured routes
-router.route("/logout").post(jwtVerify,logoutUser)
+router.route("/logout").post(jwtVerify, logoutUser)
 
 router.route("/refresh-token").post(refreshAccessToken)
 
