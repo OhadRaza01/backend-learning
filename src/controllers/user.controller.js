@@ -218,7 +218,7 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
     const user = await User.findById(req.user?._id)
 
     if (!oldPassword || !newPassword || !confirmPassword) {
-        throw new ApiError(400, "old password fields are required.")
+        throw new ApiError(400, "All password fields are required.")
     }
 
     const isPasswordValid = await user.isPasswordCorrect(oldPassword)
@@ -227,8 +227,8 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
         throw new ApiError(400, "old password is invalid")
     }
 
-    if (!(newPassword === oldPassword)) {
-        throw new ApiError(400, "new password and old password should be same.")
+    if (!(newPassword === confirmPassword)) {
+        throw new ApiError(400, "new password and confirm password should be same.")
     }
 
     user.password = newPassword
@@ -237,9 +237,9 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
 
     return res
     .status(200)
-    .json(200 , {} , "Password is changed successfully.")
-
-
+    .json(
+        new ApiResponse(200 , {} , "Password is changed successfully.")
+    )
 })
 
 export { registerUser, loginUser, logoutUser, refreshAccessToken , changeCurrentPassword }
