@@ -5,6 +5,7 @@ import { uploadOnCloudinary } from "../utils/fileUpload.js";
 import { ApiResponse } from "../utils/ApiResponse.js"
 import "dotenv/config"
 import jwt from "jsonwebtoken"
+import { deleteFileFromCloudinary } from "../utils/deleteFile.js";
 
 //options of cookies
 const options = {
@@ -278,6 +279,10 @@ const updateAvatar = asyncHandler(async (req, res) => {
 
     const avatarLocalPath = req.file?.path
 
+    const oldAvatar = req.user.avatar
+
+    const oldAvatarPublicId = oldAvatar.split("/").pop().split(".")[0]  
+
     if (!avatarLocalPath) {
         throw new ApiError(400, "Please upload an image")
     }
@@ -287,13 +292,15 @@ const updateAvatar = asyncHandler(async (req, res) => {
     if (!avatar) {
         throw new ApiError(409, "Avatar is required")
     }
-
+    
     const user = await User.findByIdAndUpdate(req.user._id, {
         $set: {
             avatar : avatar.url
         }
     }, { returnDocument: "after" }).select("-password -refreshToken");
-
+    
+    await deleteFileFromCloudinary(oldAvatarPublicId)
+    
     return res
         .status(200)
         .json(
