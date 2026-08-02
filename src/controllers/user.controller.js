@@ -254,7 +254,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 
     const { fullName, username, email } = req.body
 
-    if(!fullName || !username || !email) {
+    if (!fullName || !username || !email) {
         throw new ApiError(400, "All fields are required.")
     }
 
@@ -264,7 +264,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
             username,
             email
         }
-    }, { returnDocument: "after"}).select("-password -refreshToken")
+    }, { returnDocument: "after" }).select("-password -refreshToken")
 
     return res
         .status(200)
@@ -274,7 +274,39 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 
 })
 
+const updateAvatar = asyncHandler(async (req, res) => {
+
+    const avatarLocalPath = req.file.path
+
+    if (!avatarLocalPath) {
+        throw new ApiError(400, "Please upload an image")
+    }
+
+    const avatar = await uploadOnCloudinary(avatarLocalPath)
+
+    if (!avatar) {
+        throw new ApiError(409, "Avatar is required")
+    }
+
+    const user = await User.findByIdAndUpdate(req.user._id, {
+        $set: {
+            avatar = avatar.url
+        }
+    }, { returnDocument: "after" }).select("-password -refreshToken");
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(200, user, "Avatar updated successfully")
+        )
+
+})
+
+const updateCoverImage = asyncHandler(async (req, res) => {
+    // complete it tomorrow
+})
+
 export {
     registerUser, loginUser, logoutUser, refreshAccessToken, changeCurrentPassword
-    , getCurrentUser, updateAccountDetails
+    , getCurrentUser, updateAccountDetails, updateAvatar, updateCoverImage
 }
