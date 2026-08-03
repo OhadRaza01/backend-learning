@@ -312,7 +312,7 @@ const updateAvatar = asyncHandler(async (req, res) => {
 const updateCoverImage = asyncHandler(async (req, res) => {
     const coverImageLocalPath = req.file?.path
 
-    const oldCoverImagePublicId;
+    let oldCoverImagePublicId;
 
     if(req.user && req.user.coverImage){
         oldCoverImagePublicId = req.user.coverImage.split("/").pop().split(".")[0]
@@ -334,7 +334,9 @@ const updateCoverImage = asyncHandler(async (req, res) => {
         }
     }, { returnDocument: "after" }).select("-password -refreshToken");
 
-    await deleteFileFromCloudinary(oldCoverImagePublicId)
+    if(oldCoverImagePublicId){
+        await deleteFileFromCloudinary(oldCoverImagePublicId)
+    }
 
     return res
         .status(200)
