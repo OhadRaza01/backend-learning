@@ -312,6 +312,12 @@ const updateAvatar = asyncHandler(async (req, res) => {
 const updateCoverImage = asyncHandler(async (req, res) => {
     const coverImageLocalPath = req.file?.path
 
+    const oldCoverImagePublicId;
+
+    if(req.user && req.user.coverImage){
+        oldCoverImagePublicId = req.user.coverImage.split("/").pop().split(".")[0]
+    }
+
     if (!coverImageLocalPath) {
         throw new ApiError(400, "Please upload an image")
     }
@@ -327,6 +333,8 @@ const updateCoverImage = asyncHandler(async (req, res) => {
             coverImage : coverImage.url
         }
     }, { returnDocument: "after" }).select("-password -refreshToken");
+
+    await deleteFileFromCloudinary(oldCoverImagePublicId)
 
     return res
         .status(200)
