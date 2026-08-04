@@ -281,7 +281,7 @@ const updateAvatar = asyncHandler(async (req, res) => {
 
     const oldAvatar = req.user.avatar
 
-    const oldAvatarPublicId = oldAvatar.split("/").pop().split(".")[0]  
+    const oldAvatarPublicId = oldAvatar.split("/").pop().split(".")[0]
 
     if (!avatarLocalPath) {
         throw new ApiError(400, "Please upload an image")
@@ -292,15 +292,15 @@ const updateAvatar = asyncHandler(async (req, res) => {
     if (!avatar) {
         throw new ApiError(409, "Avatar is required")
     }
-    
+
     const user = await User.findByIdAndUpdate(req.user._id, {
         $set: {
-            avatar : avatar.url
+            avatar: avatar.url
         }
     }, { returnDocument: "after" }).select("-password -refreshToken");
-    
+
     await deleteFileFromCloudinary(oldAvatarPublicId)
-    
+
     return res
         .status(200)
         .json(
@@ -314,7 +314,7 @@ const updateCoverImage = asyncHandler(async (req, res) => {
 
     let oldCoverImagePublicId;
 
-    if(req.user && req.user.coverImage){
+    if (req.user && req.user.coverImage) {
         oldCoverImagePublicId = req.user.coverImage.split("/").pop().split(".")[0]
     }
 
@@ -330,11 +330,11 @@ const updateCoverImage = asyncHandler(async (req, res) => {
 
     const user = await User.findByIdAndUpdate(req.user._id, {
         $set: {
-            coverImage : coverImage.url
+            coverImage: coverImage.url
         }
     }, { returnDocument: "after" }).select("-password -refreshToken");
 
-    if(oldCoverImagePublicId){
+    if (oldCoverImagePublicId) {
         await deleteFileFromCloudinary(oldCoverImagePublicId)
     }
 
@@ -343,6 +343,73 @@ const updateCoverImage = asyncHandler(async (req, res) => {
         .json(
             new ApiResponse(200, user, "Cover Image updated successfully")
         )
+})
+
+const getUserChannelProfile = asyncHandler(async (req, res) => {
+
+    const username = req.params
+
+    if(!username?.trim()){
+        throw new ApiError(400 , "Username not found")
+    }
+
+    const channel = await User.aggregate([
+        {
+            $match:{
+                username: username?.toLowerCase()
+            }
+        },
+        {
+            $lookup:{
+                from:"subscriptions",
+                localField:"_id",
+                foreignField:"channel",
+                as:"subscribers"
+            }
+        },
+        {
+            $lookup:{
+                from:"subscriptions",
+                localField:"_id",
+                foreignField:"subscriber",
+                as:"subscribedTo"
+            }
+        },
+        {
+            $addFields:{
+                subscribersCount:{
+                    $size:"$subscribers"
+                },
+                subscribedToCount:{
+                    $size:"$subscribedTo"
+                }
+            }
+        },
+        {
+            $project:{
+                fullName:1,
+                email:1,
+                username:1,
+                subscribersCount:1,
+                subscribedToCount:1,
+                avatar:1,
+                coverImage:1,
+            }
+        }
+    ])
+
+    //.aggregate returns an array
+
+    if (!channel?.length) {
+        throw new ApiError(400 , "Channel not found.")
+    }
+
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(200 , channel[0] ,"user channel fetched successfully")
+    )
+
 })
 
 export {
