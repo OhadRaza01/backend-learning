@@ -347,7 +347,7 @@ const updateCoverImage = asyncHandler(async (req, res) => {
 
 const getUserChannelProfile = asyncHandler(async (req, res) => {
 
-    const username = req.params
+    const {username} = req.params
 
     if(!username?.trim()){
         throw new ApiError(400 , "Username not found")
@@ -382,6 +382,15 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
                 },
                 subscribedToCount:{
                     $size:"$subscribedTo"
+                },
+                isSubscribed:{
+                    $cond:{
+                        if:{
+                            $in:[req.user._id , "$subscribers.subscriber"]
+                        },
+                        then:true,
+                        else:false
+                    }
                 }
             }
         },
@@ -394,6 +403,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
                 subscribedToCount:1,
                 avatar:1,
                 coverImage:1,
+                isSubscribed:1
             }
         }
     ])
@@ -414,5 +424,5 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
 
 export {
     registerUser, loginUser, logoutUser, refreshAccessToken, changeCurrentPassword
-    , getCurrentUser, updateAccountDetails, updateAvatar, updateCoverImage
+    , getCurrentUser, updateAccountDetails, updateAvatar, updateCoverImage, getUserChannelProfile
 }
