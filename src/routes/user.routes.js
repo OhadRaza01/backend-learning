@@ -29,7 +29,7 @@ router.route("/refresh-token").post(refreshAccessToken)
 
 router.route("/change-password").post(jwtVerify , changeCurrentPassword)
 
-router.route("/update-account-info").post(jwtVerify , updateAccountDetails)
+router.route("/update-account-info").patch(jwtVerify , updateAccountDetails)
 
 router.route("/update-avatar").post(
     jwtVerify,
