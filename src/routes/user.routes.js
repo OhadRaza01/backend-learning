@@ -31,13 +31,13 @@ router.route("/change-password").post(jwtVerify , changeCurrentPassword)
 
 router.route("/update-account-info").patch(jwtVerify , updateAccountDetails)
 
-router.route("/update-avatar").post(
+router.route("/update-avatar").patch(
     jwtVerify,
     upload.single("avatar"),
     updateAvatar
 )
 
-router.route("/update-cover-image").post(
+router.route("/update-cover-image").patch(
     jwtVerify,
     upload.single("coverImage"),
     updateCoverImage
