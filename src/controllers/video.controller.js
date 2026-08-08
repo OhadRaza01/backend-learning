@@ -53,3 +53,5 @@ const uploadVideo = asyncHandler(async (req, res) => {
             new ApiResponse(201, { video }, "Video is uploaded successfully")
         )
 })
+
+export {uploadVideo}
