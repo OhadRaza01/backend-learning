@@ -57,13 +57,16 @@ const uploadVideo = asyncHandler(async (req, res) => {
 
 const deleteVideo = asyncHandler(async (req, res) => {
 
-    const {videoId} = req.params
+    const { videoId } = req.params
 
-    if(!videoId){
-        throw new ApiError(404 , "video not found")
+    if (!videoId) {
+        throw new ApiError(404, "video not found")
     }
 
-    const video = Video.findById(videoId);
+    const video = Video.findById({
+        _id: videoId,
+        owner: req.user._id
+    });
 
     const videoPublicId = video.videoPublicId
     const thumbnailPublicId = video.thumbnailPublicId
@@ -74,10 +77,10 @@ const deleteVideo = asyncHandler(async (req, res) => {
     await deleteFileFromCloudinary(thumbnailPublicId)
 
     return res
-    .status(200)
-    .json(
-        new ApiResponse(200 , {} , "Video is deleted successfully")
-    )
+        .status(200)
+        .json(
+            new ApiResponse(200, {}, "Video is deleted successfully")
+        )
 
 })
 
