@@ -32,7 +32,11 @@ const uploadVideo = asyncHandler(async (req, res) => {
 
     const video = await Video.create({
         videoFile: videoFile.secure_url,
+        videoPublicId : videoFile.public_id,
+
         thumbnail: thumbnail.secure_url,
+        thumbnailPublicId : thumbnail.public_id,
+
         title,
         description,
         duration: videoFile.duration,
@@ -42,7 +46,6 @@ const uploadVideo = asyncHandler(async (req, res) => {
     if (!video) {
         throw new ApiError(500, "something went wrong while uploading video")
     }
-
 
     return res
         .status(201)
