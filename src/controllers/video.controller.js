@@ -75,8 +75,8 @@ const deleteVideo = asyncHandler(async (req, res) => {
     const videoPublicId = video.videoPublicId
     const thumbnailPublicId = video.thumbnailPublicId
     
-    await deleteFileFromCloudinary(videoPublicId)
-    await deleteFileFromCloudinary(thumbnailPublicId)
+    await deleteFileFromCloudinary(videoPublicId , "video")
+    await deleteFileFromCloudinary(thumbnailPublicId , "image")
     
     await video.deleteOne();
 

@@ -8,13 +8,15 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_CLOUD_API_SECRET // Click 'View API Keys' above to copy your API secret
 });
 
-const deleteFileFromCloudinary = async (publicId) => {
+const deleteFileFromCloudinary = async (publicId, resourceType = "image") => {
 
     try {
 
         if (!publicId) return null;
 
-        const result = await cloudinary.uploader.destroy(publicId);
+        const result = await cloudinary.uploader.destroy(publicId, {
+            resource_type: resourceType
+        });
 
         return result;
 
@@ -24,4 +26,4 @@ const deleteFileFromCloudinary = async (publicId) => {
     }
 }
 
-export{deleteFileFromCloudinary}
+export { deleteFileFromCloudinary }
