@@ -81,4 +81,4 @@ const deleteVideo = asyncHandler(async (req, res) => {
 
 })
 
-export { uploadVideo }
+export { uploadVideo, deleteVideo }
