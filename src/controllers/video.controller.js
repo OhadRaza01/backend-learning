@@ -63,18 +63,22 @@ const deleteVideo = asyncHandler(async (req, res) => {
         throw new ApiError(404, "video not found")
     }
 
-    const video = Video.findById({
+    const video = await Video.findOne({
         _id: videoId,
         owner: req.user._id
     });
 
+    if (!video) {
+        throw new ApiError(404, "Video not found or you are not authorized");
+    }
+
     const videoPublicId = video.videoPublicId
     const thumbnailPublicId = video.thumbnailPublicId
-
-    await Video.deleteOne(videoId);
-
+    
     await deleteFileFromCloudinary(videoPublicId)
     await deleteFileFromCloudinary(thumbnailPublicId)
+    
+    await video.deleteOne();
 
     return res
         .status(200)
